@@ -1,7 +1,8 @@
 import { useRef } from 'react';
-import { gsap, ScrollTrigger, SplitText, useGSAP, onView, scramble, inkSettle, inkReveal, clearInk, rise, asset } from '../lib/motion';
-import { DETAILS, FACTS } from '../data';
+import { gsap, ScrollTrigger, SplitText, useGSAP, onView, scramble, inkReveal, clearInk, rise } from '../lib/motion';
+import { FACTS } from '../data';
 import SectionHead from './SectionHead';
+import Pic from './Pic';
 
 export default function Sheet({ ready }) {
   const root = useRef(null);
@@ -39,33 +40,18 @@ export default function Sheet({ ready }) {
       onEnter: () => q('.facts dt').forEach((dt, i) => gsap.delayedCall(i * 0.12 + 0.3, () => scramble(dt, 0.9))),
     });
 
-    // Detail plates wipe up from the bottom, the ink settling as they land
-    const details = q('.detail');
-    gsap.set(details, { opacity: 1 });
-    const tl = gsap.timeline({ scrollTrigger: onView(q('.details')[0], 'top 85%') })
-      .fromTo(q('.detail__img'), { clipPath: 'inset(100% 0% 0% 0%)' },
-        { clipPath: 'inset(0% 0% 0% 0%)', duration: 1.4, ease: 'expo.inOut', stagger: 0.12 }, 0)
-      .fromTo(q('.detail__img img'), { scale: 1.35 },
-        { scale: 1, duration: 1.8, ease: 'expo.out', stagger: 0.12, clearProps: 'transform' }, 0.2)
-      .fromTo(details.flatMap((d) => [d.querySelector('.fig'), d.querySelector('p')]), { opacity: 0, y: 16 },
-        { opacity: 1, y: 0, duration: 1, ease: 'power3.out', stagger: 0.06 }, 0.7);
-    details.forEach((d, i) => {
-      tl.add(inkSettle(d.querySelector('.detail__img img'), { scale: 90, duration: 1.8 }), i * 0.12);
-      tl.add(scramble(d.querySelector('.fig'), 1), 0.7 + i * 0.12);
-    });
-
     return () => clearInk(section);
   }, { scope: root, dependencies: [ready] });
 
   return (
     <section className="section paper sheet" id="sheet" ref={root}>
       <div className="wrap">
-        <SectionHead ready={ready} kanji="姿" tag="01 — Reference sheet" lines={['A study of the fox', 'behind the code.']} />
+        <SectionHead ready={ready} kanji="姿" tag="03 — About" lines={['A study of the fox', 'behind the code.']} />
 
         <div className="sheet__grid">
           <figure className="sheet__figure" data-reveal="" data-ink="" data-drift="18">
-            <img
-              src={asset('assets/view-front.jpg')} width="658" height="658" loading="lazy"
+            <Pic
+              src="assets/view-front.jpg" width="658" height="658" loading="lazy"
               alt="Front view of a white nine-tailed fox with crimson-tipped tails, seated before a red sun and a torii gate"
             />
             <figcaption className="fig">Front view</figcaption>
@@ -76,13 +62,19 @@ export default function Sheet({ ready }) {
               In Japanese folklore, a kitsune earns a new tail for every century of wisdom. At nine, it sees all things at once.
             </p>
             <p data-reveal="">
-              My work follows the same idea. Each tail is an agent with a single job — a planner, a retriever, an explainer,
-              a critic — and LangGraph is the spine that lets them move as one body.
+              I’m Kaustubh, a B.Tech student in Artificial Intelligence and Machine Learning at JSS Academy of Technical
+              Education, Noida. I work on both sides of the field: classical models such as XGBoost and Random Forests,
+              and LLM systems built with LangGraph, retrieval and tool calling.
             </p>
             <p data-reveal="">
-              I’m a third-year B.Tech student in Artificial Intelligence and Machine Learning, working across the whole LLM
-              application stack: prompts and embeddings, retrieval pipelines, tool calling and human-in-the-loop workflows.
-              I care about AI systems that are reliable enough to ship.
+              The fox is a fair picture of how I learn. A kitsune doesn’t get its tails all at once — it earns them one
+              at a time. I pick up skills the same way: one discipline learned properly, then the next, from regression
+              and feature engineering to neural networks, retrieval and agents.
+            </p>
+            <p data-reveal="">
+              It’s also how I like to build. Nine tails move as one body, and my systems work the same way: small,
+              focused parts — a model, an agent, a tool, a human checkpoint — that each do one job well and hand off
+              cleanly, instead of one piece trying to do everything.
             </p>
             <dl className="facts" data-reveal="">
               {FACTS.map(({ term, detail }) => (
@@ -93,18 +85,6 @@ export default function Sheet({ ready }) {
               ))}
             </dl>
           </div>
-        </div>
-
-        <div className="details">
-          {DETAILS.map((d) => (
-            <figure className="detail" data-reveal="" key={d.caption}>
-              <div className="detail__img">
-                <img src={asset(d.src)} alt={d.alt} width={d.w} height="292" loading="lazy" />
-              </div>
-              <figcaption className="fig">{d.caption}</figcaption>
-              <p><strong>{d.trait}</strong> {d.text}</p>
-            </figure>
-          ))}
         </div>
       </div>
     </section>

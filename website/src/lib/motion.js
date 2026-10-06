@@ -11,6 +11,8 @@ export { gsap, ScrollTrigger, SplitText, useGSAP };
 
 export const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 export const finePointer = window.matchMedia('(pointer: fine)').matches;
+// Phones and small CPUs skip the animated SVG displacement filters (the clip-path reveals stay)
+export const lowPower = (navigator.hardwareConcurrency || 8) <= 4 || window.matchMedia('(pointer: coarse)').matches;
 // Everything animated is gated on this; reduced-motion visitors get the static page.
 export const animate = !reduceMotion;
 
@@ -57,6 +59,7 @@ export function scramble(el, duration = 1) {
 const NS = 'http://www.w3.org/2000/svg';
 let inkId = 0;
 export function inkSettle(el, { scale = 160, duration = 2 } = {}) {
+  if (lowPower) return gsap.to({}, { duration: 0 });
   const id = `ink-settle-${inkId++}`;
   const make = (tag, attrs) => {
     const node = document.createElementNS(NS, tag);

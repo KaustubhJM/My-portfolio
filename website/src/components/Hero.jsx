@@ -1,9 +1,10 @@
 import { useEffect, useRef } from 'react';
-import { gsap, SplitText, useGSAP, glideTo, scramble, asset } from '../lib/motion';
+import { gsap, SplitText, useGSAP, glideTo, scramble, asset, finePointer, listeners } from '../lib/motion';
 import { createHeroGL } from '../lib/heroGL';
-import { RESUME } from '../data';
+import { RESUME, PROOF } from '../data';
 import { Arrow } from './Svg';
 import Embers from './Embers';
+import Pic from './Pic';
 
 /* Opening sequence (built once `ready`, played on `intro` by the loader) + scroll-out */
 export default function Hero({ ready, intro }) {
@@ -41,8 +42,24 @@ export default function Hero({ ready, intro }) {
       .to('.hero__meta', { opacity: 1, y: 0, duration: 1.3 }, 1.35)
       .add(() => hero.querySelectorAll('.hero__meta .label').forEach((l) => scramble(l, 1)), 1.35)
       .to('.hero__embers', { opacity: 1, duration: 2.4, ease: 'power1.out' }, 0.6)
-      .fromTo('.hero__vertical', { opacity: 1, clipPath: 'inset(0% 0% 100% 0%)' }, { clipPath: 'inset(0% 0% 0% 0%)', duration: 1.8, ease: 'power2.inOut' }, 1.4);
+      .fromTo('.hero__vertical', { opacity: 1, clipPath: 'inset(0% 0% 100% 0%)' }, { clipPath: 'inset(0% 0% 0% 0%)', duration: 1.8, ease: 'power2.inOut' }, 1.4)
+      // Letters have landed: unmask the title lines so the hover hop isn't clipped
+      .add(() => hero.classList.add('is-settled'), 2.5);
     tl.current = intro;
+
+    // Hover hop: each letter of the title jumps when the pointer reaches it and springs back down
+    const [on, off] = listeners();
+    if (finePointer) {
+      split.chars.forEach((char) => {
+        let hop = null;
+        on(char, 'pointerenter', () => {
+          if (!hero.classList.contains('is-settled') || hop?.isActive()) return;
+          hop = gsap.timeline()
+            .to(char, { yPercent: -24, duration: 0.26, ease: 'power2.out' })
+            .to(char, { yPercent: 0, duration: 0.9, ease: 'elastic.out(1, 0.35)' });
+        });
+      });
+    }
 
     // Leaving the hero: copy drifts up and fades, the fox sinks slower than the page
     gsap.timeline({ scrollTrigger: { trigger: hero, start: 'top top', end: 'bottom top', scrub: true } })
@@ -50,7 +67,7 @@ export default function Hero({ ready, intro }) {
       .to(art, { yPercent: 16, ease: 'none' }, 0)
       .to('.hero__vertical', { yPercent: -60, ease: 'none' }, 0);
 
-    return () => gl?.destroy();
+    return () => { off(); gl?.destroy(); };
   }, { scope: root, dependencies: [ready] });
 
   useEffect(() => { if (intro) tl.current?.play(); }, [intro]);
@@ -58,7 +75,11 @@ export default function Hero({ ready, intro }) {
   return (
     <section className="hero" id="top" ref={root} data-drift-area="">
       <div className="hero__art" aria-hidden="true" data-drift="24">
-        <img src={asset('assets/kitsune-hero.jpg')} alt="" width="1024" height="1536" fetchPriority="high" />
+        <Pic
+          src="assets/kitsune-hero.jpg" width="1024" height="1536" fetchPriority="high"
+          srcSet={`${asset('assets/kitsune-hero-640.webp')} 640w, ${asset('assets/kitsune-hero.webp')} 1024w`}
+          sizes="(max-width: 820px) 100vw, min(60vw, 880px)"
+        />
         <canvas className="hero__gl" />
       </div>
       <Embers />
@@ -67,7 +88,7 @@ export default function Hero({ ready, intro }) {
       <div className="hero__inner wrap">
         <p className="eyebrow hero__eyebrow">
           <span className="eyebrow__line" />
-          <span className="hero__eyebrow-text">AI Engineer — Agentic systems · RAG · LLMs</span>
+          <span className="hero__eyebrow-text">AI / ML Engineer — Machine learning · Deep learning · Agentic AI</span>
         </p>
         <h1 className="hero__title">
           <span className="hero__line"><span><span data-chars="">Nine tails.</span></span></span>
@@ -81,23 +102,26 @@ export default function Hero({ ready, intro }) {
           </span>
         </h1>
         <p className="hero__lede">
-          I’m <strong>Kaustubh Jeet Mishra</strong>. I build agentic AI where many specialised agents move as one — planning,
-          retrieving, calling tools, and pausing for a human when it matters.
+          I’m <strong>Kaustubh Jeet Mishra</strong>. I build across the AI stack — from XGBoost models and neural networks
+          to agentic systems where many specialised agents move as one, retrieving, calling tools and pausing for a human when it matters.
         </p>
         <div className="hero__ctas">
-          <a className="btn btn--blood" href="#work" data-magnetic="" data-cursor-text="View" onClick={(e) => glideTo(e, '#work')}>
+          <a className="btn btn--blood" href="#work" data-magnetic="" onClick={(e) => glideTo(e, '#work')}>
             See the work <Arrow />
           </a>
-          <a className="btn btn--ghost" href={asset(RESUME)} download data-magnetic="" data-cursor-text="Save">Download résumé</a>
+          <a className="btn btn--ghost" href={asset(RESUME)} download data-magnetic="">Download résumé</a>
         </div>
       </div>
 
       <div className="hero__meta wrap">
-        <div className="hero__meta-item"><span className="label">Studying</span>B.Tech AI &amp; ML · JSSATE Noida · 2028</div>
+        <div className="hero__meta-item">
+          <span className="label">Proof</span>
+          <p className="proof">{PROOF.map((item) => <span key={item}>{item}</span>)}</p>
+        </div>
         <div className="hero__meta-item">
           <span className="label">Now building</span><span className="live" aria-hidden="true" />Teacher–Student AI Classroom
         </div>
-        <a className="hero__scroll" href="#sheet" onClick={(e) => glideTo(e, '#sheet')}>Scroll <Arrow dir="down" /></a>
+        <a className="hero__scroll" href="#work" onClick={(e) => glideTo(e, '#work')}>Scroll <Arrow dir="down" /></a>
       </div>
     </section>
   );

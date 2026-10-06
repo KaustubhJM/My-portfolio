@@ -45,7 +45,9 @@ export default function Tails({ ready }) {
         ease: 'none',
         scrollTrigger: {
           trigger: section,
-          start: 'top top',
+          // Pin at the top; if the section is taller than the window, pin once its bottom
+          // reaches the screen bottom instead, so the whole card (tags included) stays in view
+          start: () => (section.offsetHeight > window.innerHeight ? 'bottom bottom' : 'top top'),
           end: () => `+=${distance()}`,
           pin: true,
           scrub: 1,
@@ -94,17 +96,18 @@ export default function Tails({ ready }) {
       <div className="wrap">
         <SectionHead
           ready={ready} kanji="尾" tag="02 — Nine tails" lines={['Nine disciplines,', 'one body of work.']}
-          intro="Every tail is a skill I use to take an LLM system from idea to something people can rely on."
+          intro="Every tail is a skill, from classical models to agents, that I use to take an AI system from idea to something people can rely on."
         />
 
         <ol className="tails__grid" ref={grid}>
           {TAILS.map((t, i) => (
-            <li className="tail" data-reveal="" data-cursor-text="Scroll" key={t.title}>
+            <li className="tail" data-reveal="" key={t.title}>
               <span className="tail__num" aria-hidden="true">{t.num}</span>
               {/* one text node, so the scramble effect can swap it cleanly */}
               <span className="tail__count">{`Tail ${i + 1} / ${TAILS.length}`}</span>
               <h3>{t.title}</h3>
               <p>{t.text}</p>
+              {t.proof && <p className="tail__proof"><span>Shown in</span> {t.proof}</p>}
               <ul className="tags">{t.tags.map((tag) => <li key={tag}>{tag}</li>)}</ul>
             </li>
           ))}

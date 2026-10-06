@@ -63,12 +63,12 @@ export default function Summon({ ready }) {
         <h2 className="summon__title" data-reveal="">
           Got a problem with too many moving parts?<span> Let’s give it nine tails.</span>
         </h2>
-        <p className="summon__note" data-reveal="">Open to internships, research collaborations and interesting agentic-AI problems.</p>
-        <a className="summon__mail" href={`mailto:${EMAIL}`} data-reveal="" data-cursor-text="Write">{EMAIL}</a>
+        <p className="summon__note" data-reveal="">Looking for an AI/ML or GenAI engineering internship — remote or Delhi NCR.</p>
+        <a className="summon__mail" href={`mailto:${EMAIL}`} data-reveal="">{EMAIL}</a>
         <ul className="socials" data-reveal="">
-          <li><a href={LINKEDIN} target="_blank" rel="noopener" data-magnetic="" data-cursor-text="Open">LinkedIn <Arrow dir="out" /></a></li>
-          <li><a href={GITHUB} target="_blank" rel="noopener" data-magnetic="" data-cursor-text="Open">GitHub <Arrow dir="out" /></a></li>
-          <li><a href={asset(RESUME)} download data-magnetic="" data-cursor-text="Save">Résumé <Arrow dir="down" /></a></li>
+          <li><a href={LINKEDIN} target="_blank" rel="noopener noreferrer" data-magnetic="">LinkedIn <Arrow dir="out" /></a></li>
+          <li><a href={GITHUB} target="_blank" rel="noopener noreferrer" data-magnetic="">GitHub <Arrow dir="out" /></a></li>
+          <li><a href={asset(RESUME)} download data-magnetic="">Résumé <Arrow dir="down" /></a></li>
         </ul>
       </div>
 
