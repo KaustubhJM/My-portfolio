@@ -6,7 +6,7 @@ import { Arrow } from './Svg';
 import SectionHead from './SectionHead';
 import Pic from './Pic';
 import ProjectPanel from './ProjectPanel';
-import { Flow, Tags, CardLinks, DemoVideo } from './Project';
+import { Flow, Tags, CardLinks } from './Project';
 
 const METHOD = [
   ['dataset', 'Data'],
@@ -191,7 +191,6 @@ export default function Work({ ready }) {
                 alt="Top-down view of the nine-tailed fox with its tails fanned out in a circle"
               />
             </figure>
-            <DemoVideo project={FEATURE} className="demo--card" />
             <div className="metric">
               <p className="metric__label">{metric.label}</p>
               <p className="metric__vals">

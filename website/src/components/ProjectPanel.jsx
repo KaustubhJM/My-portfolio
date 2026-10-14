@@ -139,9 +139,9 @@ export default function ProjectPanel({ project, origin, onClose }) {
               <h3 className="panel__label">Evaluation</h3>
               <div className="evalwrap">
                 <table className="eval">
-                  <caption className="sr-only">Retrieval evaluation: baseline ranking compared with best-first ranking</caption>
+                  <caption className="sr-only">Evaluation: each metric before and after the improvements</caption>
                   <thead>
-                    <tr><th scope="col">Metric</th><th scope="col">Baseline</th><th scope="col">Best-first</th></tr>
+                    <tr><th scope="col">Metric</th><th scope="col">Before</th><th scope="col">After</th></tr>
                   </thead>
                   <tbody>
                     {project.evaluation.map((row) => (

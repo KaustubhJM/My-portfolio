@@ -49,29 +49,35 @@ export const FEATURE = {
   flow: ['Planner', 'Explainer', 'Quiz', { human: 'Student interrupts' }],
   tags: ['LangGraph', 'Groq', 'Gemini', 'RAG', 'FAISS', 'DeepEval'],
   metric: { label: 'Ranking precision', from: 0.68, to: 0.9, note: 'after moving retrieval to best-first ranking' },
-  // TODO(Kaustubh): fill in how the 0.68 → 0.90 figure was measured (shown under the metric)
+  // How the 0.68 → 0.90 figure was measured (shown under the metric)
   methodology: {
-    dataset: '',   // e.g. which documents / lessons were indexed
-    queries: '',   // number of evaluation queries
-    k: '',         // the k in precision@k
-    judge: '',     // DeepEval metric(s) / judge model used
-    baseline: '',  // what the 0.68 baseline ranking was
+    dataset: 'DBMS Unit 5 slide notes (72 pages), with a hand-written question set and ideal answers',
+    queries: '18 questions answerable from the notes',
+    k: '3, plus neighbouring chunks',
+    judge: 'Custom DeepEval metrics, scored by gpt-oss-120b',
+    baseline: 'The same chunks in page order',
   },
-  // TODO(Kaustubh): evaluation table in the detail panel — baseline vs. best-first
+  // Evaluation table in the detail panel — before vs. after (DBMS = DBMS Unit 5, TC = TC Unit 5 notes)
   evaluation: [
-    { metric: 'Precision@k', baseline: '', best: '' },
-    { metric: 'Number of queries', baseline: '', best: '' },
-    { metric: 'Latency', baseline: '', best: '' },
-    { metric: 'Cost per lesson', baseline: '', best: '' },
+    { metric: 'Ranking precision', baseline: '0.68', best: '0.93' },
+    { metric: 'Precision@k (DBMS / TC)', baseline: '0.65 / 0.50', best: '0.78 / 0.75' },
+    { metric: 'Doubt-answer correctness', baseline: '0.77', best: '0.87' },
+    { metric: 'Time to first sentence', baseline: '78 s', best: '27 s' },
   ],
-  links: { github: '', demo: '', video: '', caseStudy: '' }, // TODO(Kaustubh): repo, live demo, video and case-study URLs
+  links: { github: '', demo: '', video: '', caseStudy: '' }, // TODO(Kaustubh): repo (private for now), live demo, video and case-study URLs
   thumb: '',        // TODO(Kaustubh): card/panel image, e.g. 'media/classroom.webp'
-  demo: '',         // TODO(Kaustubh): short looping clip — one path or ['media/classroom.webm', 'media/classroom.mp4']
-  poster: '',       // TODO(Kaustubh): poster frame for the demo clip, e.g. 'media/classroom-poster.webp'
-  problem: '',      // TODO(Kaustubh): the problem this solves
-  architecture: '', // TODO(Kaustubh): how the agents, retrieval and voice fit together
-  results: [],      // TODO(Kaustubh): measured outcomes
-  year: '',         // TODO(Kaustubh)
+  demo: ['media/classroom.webm', 'media/classroom.mp4'], // 14.6 s silent loop of a real class (LLM Gateway, YouTube source)
+  poster: 'media/classroom-poster.webp',
+  problem: 'Self-study from slides and notes is one-way: when a doubt comes up there’s no one to ask, and general chatbots answer from their own knowledge, not from what your syllabus says. This classroom turns your own notes into a structured spoken lecture that you can interrupt at any moment, and it answers your doubts from those same notes.',
+  architecture: 'A LangGraph graph of agents. A Planner splits the source into 4–7 sections and fetches the matching notes for each; an Explainer teaches every section in three parts, generating the next part while the current one is spoken; an interruption goes to a tool-calling doubt agent that searches your notes (FAISS plus a cross-encoder reranker, with web search as a fallback), and the lecture resumes at the same sentence; a Quiz agent closes the class. It reads PDFs, slides, images and YouTube videos (OCR plus Gemini vision), saves progress so a lecture survives a crash, and a FastAPI + React site runs the same agents in the browser with a talking avatar.',
+  results: [
+    'Ranking precision rose from 0.68 to 0.90 by returning the best chunks first, and to 0.93 with a cross-encoder reranker.',
+    'The reranker raised precision@k from 0.65 to 0.78 (DBMS) and from 0.50 to 0.75 (TC), with no loss of recall.',
+    'Telling the teacher to search the notes first raised doubt-answer correctness from 0.77 to 0.87 on 60 questions.',
+    'A full 25-minute generated lecture scored 0.99 faithfulness to the notes and 0.98 accuracy.',
+    'Time to the first spoken sentence dropped from 78 s to 27 s.',
+  ],
+  year: '2026',
   status: 'In progress',
   graph: '',        // TODO(Kaustubh): optional Mermaid export of the real LangGraph
 };
