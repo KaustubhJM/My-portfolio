@@ -78,13 +78,33 @@ export const FEATURE = {
     'Time to the first spoken sentence dropped from 78 s to 27 s.',
   ],
   year: '2026',
-  status: 'In progress',
+  status: 'Version 1',
   graph: '',        // TODO(Kaustubh): optional Mermaid export of the real LangGraph
 };
 
 export const PROJECTS = [
   {
-    no: '02', title: 'Blog Writing Agent',
+    no: '02', title: 'Bit — Desktop Robot Companion',
+    desc: 'A 3D robot that lives on your Windows desktop: it reminds you what’s next, plans your study day around your classes and answers to “Hey Bit” — with local speech recognition and voice.',
+    flow: ['Hey Bit', 'Transcribe', 'Memory + LLM', 'Validate', { human: 'Approve' }, 'Act'],
+    tags: ['LangGraph', 'FastAPI', 'Electron', 'Three.js', 'Whisper', 'Groq / Gemini'],
+    links: { github: '', demo: '', video: '', caseStudy: '' }, // TODO(Kaustubh): github.com/KaustubhJM/Desktop-Assistant once the latest work is pushed and the old keys are rotated
+    thumb: '',        // TODO(Kaustubh): card image, e.g. 'media/bit.webp'
+    problem: 'Reminder apps are easy to swipe away and you can’t talk to them, while general assistants don’t know your timetable and send what you say to the cloud. Bit sits on your desktop where you can’t miss it, knows your schedule and goals, understands plain English like “push my 3pm to 4”, and keeps what it hears and sees on the laptop unless you ask it to share.',
+    architecture: 'An Electron + Three.js app draws the robot and starts a FastAPI backend that does the thinking. Speech recognition (Whisper), the voice (Kokoro) and the “Hey Bit” wake word run on the laptop: a tiny Vosk recogniser listens for the name, and Whisper confirms it before anything happens. Each message goes through a LangGraph memory graph — separate chat threads, older messages folded into a summary, and long-term facts about you — then to a router that rotates across free Groq and Gemini models, moving on when one hits its rate limit. The model never edits your data: it returns JSON that the backend validates before saving, and deletes and the daily plan wait for your OK. A scheduler checks every 20 seconds and on wake-up, so each reminder fires exactly once, even after the laptop sleeps. On top sit web search, screenshot help, music control, a study planner that tracks LeetCode and YouTube lectures, and Google Calendar sync.',
+    results: [
+      'Covered by 241 backend unit tests and a 32-section self-test that drives the real app on screen.',
+      'The “Hey Bit” listener uses about 2% of one CPU core; hands-free mode as a whole costs 3–5%.',
+      'On Bluetooth headset mics the wake word went from 4 of 12 names heard to 12 of 12, after skipping a filter that dropped phone-quality audio.',
+      'Running Whisper on 8 CPU threads made transcription about 30% faster, and keeping connections open saves about 0.5 s per AI call.',
+      'Reminders fire exactly once, and ones missed while the laptop slept arrive as a single catch-up message.',
+    ],
+    year: '2026',
+    status: 'In progress',
+    graph: '',        // TODO(Kaustubh): optional Mermaid export of the memory graph
+  },
+  {
+    no: '03', title: 'Blog Writing Agent',
     desc: 'An autonomous blog pipeline: ideation, live web research, outlining, drafting, human review and publishing to WordPress or Ghost.',
     flow: ['Ideate', 'Research', 'Outline', 'Write', { human: 'Review' }, 'Publish'],
     tags: ['LangGraph', 'Web search', 'Streamlit'],
@@ -98,7 +118,7 @@ export const PROJECTS = [
     graph: '',        // TODO(Kaustubh): optional Mermaid export
   },
   {
-    no: '03', title: 'LinkedIn Posting Agent',
+    no: '04', title: 'LinkedIn Posting Agent',
     desc: 'Turns messy notes into structured LinkedIn posts with gpt-oss-120b via ChatGroq, then publishes through OAuth2 and the LinkedIn API.',
     flow: ['Notes', 'Draft', { human: 'Approve' }, 'Post'],
     tags: ['LangGraph', 'ChatGroq', 'LinkedIn API'],
@@ -112,7 +132,7 @@ export const PROJECTS = [
     graph: '',        // TODO(Kaustubh): optional Mermaid export
   },
   {
-    no: '04', title: 'Conversational AI Assistant',
+    no: '05', title: 'Conversational AI Assistant',
     desc: 'A stateful assistant on gemini-2.5-flash with memory across threads, web search, live stock prices, maths tools and a full RAG pipeline.',
     flow: ['Chat', 'Route', 'Tools / RAG', 'Memory'],
     tags: ['LangGraph', 'Gemini', 'FAISS'],
@@ -129,7 +149,7 @@ export const PROJECTS = [
 
 export const ML_PROJECTS = [
   {
-    no: '05', title: 'Kirana Store Inventory Intelligence',
+    no: '06', title: 'Kirana Store Inventory Intelligence',
     desc: 'ML pipelines for kirana and FMCG warehouse stock: product freshness scoring, expiry-risk tiers and inventory insights, trained on engineered synthetic retail data.',
     flow: ['Synthetic data', 'Features', 'XGBoost vs RF', 'Risk tiers'],
     tags: ['XGBoost', 'Random Forest', 'Pandas'],
@@ -143,7 +163,7 @@ export const ML_PROJECTS = [
     graph: '',
   },
   {
-    no: '06', title: 'Fraud Detection Model',
+    no: '07', title: 'Fraud Detection Model',
     desc: 'A classifier that flags anomalous and fraudulent transactions in a heavily imbalanced dataset, with resampling to lift precision and recall on the rare class.',
     flow: ['Transactions', 'Resample', 'Classify', 'Flag fraud'],
     tags: ['Scikit-learn', 'Anomaly detection'],
@@ -158,7 +178,7 @@ export const ML_PROJECTS = [
   },
   // TODO(Kaustubh): uncomment to show this project (it renders as soon as it's in the array)
   // {
-  //   no: '07', title: 'Kirana Retail Demand Forecasting (XGBoost)',
+  //   no: '08', title: 'Kirana Retail Demand Forecasting (XGBoost)',
   //   desc: '',
   //   flow: ['Sales history', 'Features', 'XGBoost', 'Forecast'],
   //   tags: ['XGBoost', 'Pandas'],
